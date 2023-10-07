@@ -30,6 +30,7 @@ char *PostfixToPrefix(char *postfix) {
     }
     return stack[0];
 }
+
 int main() {
     char postfix[MAXN];
     scanf("%s", postfix);
