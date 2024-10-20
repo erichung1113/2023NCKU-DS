@@ -1,51 +1,86 @@
 #include <stdio.h>
-#include <stdbool.h>
-#define max(a,b) (a>b?a:b)
+#include <stdlib.h>
+#include <string.h>
 
-const int MAXN = 1e4 + 5;
+#define MAX_SIZE 100
 
-int dsu[MAXN], height[MAXN];
-int find(int cur) {
-    if (cur == dsu[cur]) return cur;
-    return dsu[cur] = find(dsu[cur]);
+int heap[MAX_SIZE];
+int heapSize = 1;
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
 }
-void uni(int a, int b) {
-    a = find(a), b = find(b);
-    if(a == b) return;
-    if (height[a] >= height[b]) {
-        dsu[b] = a;
-        height[a] = max(height[a], height[b] + 1);
-    } else {
-        dsu[a] = b;
-        height[b] = max(height[b], height[a] + 1);
+
+void heapifyUp(int index) {
+    while (index > 1 && heap[index] < heap[index / 2]) {
+        swap(&heap[index], &heap[index / 2]);
+        index = index / 2;
     }
 }
-bool same(int a, int b) {
-    return (find(a) == find(b));
+
+void heapifyDown(int index) {
+    int smallest = index;
+    int leftChild = 2 * index;
+    int rightChild = 2 * index + 1;
+
+    if (leftChild < heapSize && heap[leftChild] < heap[smallest]) {
+        smallest = leftChild;
+    }
+
+    if (rightChild < heapSize && heap[rightChild] < heap[smallest]) {
+        smallest = rightChild;
+    }
+
+    if (smallest != index) {
+        swap(&heap[index], &heap[smallest]);
+        heapifyDown(smallest);
+    }
+}
+
+void insert(int value) {
+    heap[heapSize] = value;
+    heapifyUp(heapSize);
+    heapSize++;
+}
+
+void deleteElement(int value) {
+    int index = 0;
+    for (int i = 1; i < heapSize; i++) {
+        if (heap[i] == value) {
+            index = i;
+            break;
+        }
+    }
+
+    heap[index] = heap[--heapSize];
+    heapifyDown(index);
+}
+
+void printHeap() {
+    for (int i = 1; i < heapSize; i++) {
+        printf("%d ", heap[i]);
+    }
+    printf("\n");
 }
 
 int main() {
-    int t;
-    scanf("%d", &t);
-    while (t--) {
-        int n, m, a, b;
-        scanf("%d %d", &n, &m);
-        for (int i = 0; i < n; i++) dsu[i] = i, height[i] = 1;
-        while (m--) {
-            char ope[10];
-            scanf("%s", ope);
-            if (ope[0] == 'u') {
-                scanf("%d %d", &a, &b);
-                uni(a, b);
-                continue;
-            } else if (ope[0] == 'f') {
-                scanf("%d", &a);
-                printf("%d", find(a));
-            } else {
-                scanf("%d %d", &a, &b);
-                printf("%s", same(a, b)?"true":"false");
-            }
-            if(m || t) printf("\n");
+    char command[10];
+    int value;
+
+    while (scanf("%s", command) != EOF) {
+        if (strcmp(command, "insert") == 0) {
+            scanf("%d", &value);
+            insert(value);
+        } else if (strcmp(command, "delete") == 0) {
+            scanf("%d", &value);
+            deleteElement(value);
         }
+        // for(int i=0;i<heapSize;i++) printf("%d ", heap[i]);
+        // printf("\n");
     }
+
+    printHeap();
+    return 0;
 }
