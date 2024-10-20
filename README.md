@@ -1,3 +1,4 @@
-# NCKU-Data-Struction
+# NCKU-Data-Structure
 
-This is the homework record for the Data Structure course in the first semester of the academic year 112 at National Cheng Kung University.
+
+This is the homework record for the 2024 Data Structure course at National Cheng Kung University.
